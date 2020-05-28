@@ -13,11 +13,11 @@ import (
 )
 
 var (
-	addr      = flag.String("addr", ":9080", "bind address")
-	data      = flag.String("data", "./data", "queue dir")
-	fs        = flag.Bool("fs", true, "filestore flag")
-	queue     *q.Queue
-	fileStore *filestore.FileStore
+	addr   = flag.String("addr", ":9080", "bind address")
+	data   = flag.String("data", "./data", "queue dir")
+	fs     = flag.Bool("fs", true, "filestore flag")
+	queue  *q.Queue
+	fstore *filestore.FileStore
 )
 
 func EnqueueHandler(w http.ResponseWriter, r *http.Request) {
@@ -34,7 +34,7 @@ func EnqueueHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if *fs {
-		fileStore.WriteLine([]byte(data))
+		fstore.WriteLine([]byte(data))
 	}
 	rest.MustEncode(w, rest.RestMessage{"ok", nil})
 }
@@ -74,7 +74,7 @@ func main() {
 	}
 	if *fs {
 		fsdir := filepath.Join(*data, "fs")
-		if fileStore, err = filestore.NewFileStore(fsdir); err != nil {
+		if fstore, err = filestore.NewFileStore(fsdir); err != nil {
 			glog.Fatal(err)
 		}
 	}
